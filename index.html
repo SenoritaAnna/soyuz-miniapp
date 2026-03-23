@@ -446,8 +446,16 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--text);mi
 
     <label class="f-label">Имя</label>
     <input class="f-input" type="text" placeholder="Ваше имя" id="inp-name">
-    <label class="f-label">Telegram / WhatsApp / email</label>
+
+    <label class="f-label">Telegram / WhatsApp</label>
     <input class="f-input" type="text" placeholder="@username или +7..." id="inp-contact">
+
+    <label class="f-label">Email</label>
+    <input class="f-input" type="email" placeholder="your@email.com" id="inp-email">
+
+    <label class="f-label">Название компании (если есть)</label>
+    <input class="f-input" type="text" placeholder="Например: Acme Ltd" id="inp-company">
+
     <label class="f-label" style="margin-bottom:9px">Что интересует?</label>
     <div class="chips">
       <span class="chip" onclick="this.classList.toggle('on')">Гонконг + Лаос</span>
@@ -457,8 +465,22 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--text);mi
       <span class="chip" onclick="this.classList.toggle('on')">Крипто.Про</span>
       <span class="chip" onclick="this.classList.toggle('on')">Другое</span>
     </div>
-    <label class="f-label">Комментарий</label>
-    <textarea class="f-textarea" id="inp-comment" placeholder="Опишите вашу задачу..."></textarea>
+
+    <label class="f-label">Интересующая юрисдикция</label>
+    <select class="f-input" id="inp-geo" style="cursor:pointer;color:var(--text)">
+      <option value="" style="background:#111">Выберите юрисдикцию...</option>
+      <option value="🇭🇰 Гонконг" style="background:#111">🇭🇰 Гонконг</option>
+      <option value="🇱🇦 Лаос" style="background:#111">🇱🇦 Лаос</option>
+      <option value="🇭🇰+🇱🇦 Гонконг + Лаос" style="background:#111">🇭🇰+🇱🇦 Гонконг + Лаос (пакет)</option>
+      <option value="🇦🇪 ОАЭ" style="background:#111">🇦🇪 ОАЭ</option>
+      <option value="🇸🇬 Сингапур" style="background:#111">🇸🇬 Сингапур</option>
+      <option value="🇨🇾 Кипр" style="background:#111">🇨🇾 Кипр</option>
+      <option value="Другая" style="background:#111">Другая / пока не знаю</option>
+    </select>
+
+    <label class="f-label">Ваш вопрос или комментарий</label>
+    <textarea class="f-textarea" id="inp-comment" placeholder="Опишите вашу задачу или задайте вопрос..."></textarea>
+
     <button class="btn-primary" onclick="submitForm()">Отправить заявку →</button>
     <p class="f-note">Нажимая кнопку, вы соглашаетесь с <a href="https://soyuzconsult.com/privacy_policy_ru" style="color:var(--text3)">политикой конфиденциальности</a></p>
   </div>
@@ -616,7 +638,10 @@ async function submitForm() {
   const contact = document.getElementById('inp-contact').value.trim();
   if (!name || !contact) { alert('Укажите имя и контакт'); return; }
 
-  const services = [...document.querySelectorAll('.chip.on')].map(c => c.textContent);
+  const email   = document.getElementById('inp-email').value.trim();
+  const company = document.getElementById('inp-company').value.trim();
+  const services = [...document.querySelectorAll('#chip-wrap .chip.on, .chips .chip.on')].map(c => c.textContent.trim()).filter((v,i,a) => a.indexOf(v)===i);
+  const geo     = document.getElementById('inp-geo') ? [document.getElementById('inp-geo').value].filter(Boolean) : [];
   const comment  = document.getElementById('inp-comment').value.trim();
   const utm      = getUTM();
 
@@ -625,8 +650,11 @@ async function submitForm() {
     '🔔 *Новая заявка с Mini App*\n\n' +
     '👤 *Имя:* ' + name + '\n' +
     '📱 *Контакт:* ' + contact + '\n' +
+    (email ? '📧 *Email:* ' + email + '\n' : '') +
+    (company ? '🏢 *Компания:* ' + company + '\n' : '') +
     (services.length ? '📋 *Интерес:* ' + services.join(', ') + '\n' : '') +
-    (comment ? '💬 *Комментарий:* ' + comment + '\n' : '') +
+    (geo.length ? '🌍 *Юрисдикция:* ' + geo.join(', ') + '\n' : '') +
+    (comment ? '💬 *Вопрос:* ' + comment + '\n' : '') +
     '🔗 *Источник:* ' + utm;
 
   // Отправка в группу через бота
