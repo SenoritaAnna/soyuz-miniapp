@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Soyuz Consult</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --black:#000000; --white:#ffffff; --white-soft:#D8DDE6;
+  --gray-mid:#838382; --gray-dark:#1a1a1a;
+  --teal:#92DBD1; --aqua:#009393; --aqua-bg:rgba(0,147,147,0.08); --aqua-border:rgba(0,147,147,0.22);
+  --gold:#C9A84C; --gold-light:#E8C870; --gold-dim:#8B6F28;
+  --gold-bg:rgba(201,168,76,0.12); --gold-border:rgba(201,168,76,0.5);
+  --brown-bg:#1E1608;
+  --card-bg:#111111; --card-border:rgba(255,255,255,0.08); --card-border2:rgba(255,255,255,0.14);
+  --text:#BEC5CE; --text2:#888880; --text3:#444440;
+  --r:14px; --r-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px;line-height:1.6}
+
+/* ── HEADER ── */
+.header{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--card-border);padding:13px 18px;display:flex;align-items:center;justify-content:space-between}
+.logo{letter-spacing:0.18em;font-size:16px;font-weight:700;color:var(--white);line-height:1}
+.logo-sub{font-size:7.5px;letter-spacing:0.2em;color:var(--gray-mid);font-weight:400;text-transform:uppercase;margin-top:2px;display:block}
+
+/* ── GOLD BUTTON (primary) ── */
+.btn-primary{
+  background:var(--brown-bg);
+  color:var(--gold-light);
+  border:2px solid var(--gold);
+  border-radius:12px;
+  padding:14px 20px;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;margin-bottom:9px;
+  transition:all .15s;letter-spacing:0.02em;
+  box-shadow:0 0 0 0 rgba(201,168,76,0);
+}
+.btn-primary:active{opacity:.85;transform:scale(.98);box-shadow:0 0 12px rgba(201,168,76,0.25)}
+
+/* ── OUTLINE GOLD (secondary) ── */
+.btn-secondary{
+  background:transparent;color:var(--gold);
+  border:1.5px solid var(--gold-border);
+  border-radius:12px;padding:13px 20px;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;
+  display:block;width:100%;text-align:center;transition:all .15s;
+}
+.btn-secondary:active{background:var(--brown-bg)}
+
+/* ── HEADER CTA ── */
+.header-cta{
+  background:var(--brown-bg);color:var(--gold-light);
+  border:1.5px solid var(--gold);border-radius:8px;
+  padding:7px 14px;font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;letter-spacing:0.02em;
+}
+.header-cta:active{opacity:.8}
+
+/* ── SERVICE CTA ── */
+.srv-cta{
+  background:var(--brown-bg);border:1.5px solid var(--gold-border);
+  color:var(--gold-light);border-radius:8px;
+  padding:10px 14px;font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;
+  display:block;width:100%;text-align:center;transition:opacity .15s;
+}
+.srv-cta:active{opacity:.75}
+
+/* ── PAGES ── */
+.page{display:none;padding-bottom:80px}
+.page.active{display:block;animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HERO ── */
+.hero{padding:32px 18px 24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;bottom:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(0,147,147,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--card-border2);border-radius:100px;padding:4px 11px;font-size:10px;font-weight:500;color:var(--gray-mid);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:18px;background:transparent}
+.hero-tag::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--aqua);animation:blink 2.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:26px;font-weight:700;line-height:1.18;letter-spacing:-0.025em;color:var(--white-soft);margin-bottom:14px}
+.hero h1 .accent{color:var(--aqua)}
+.hero p{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:24px;max-width:320px}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 18px 26px}
+.stat{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r-sm);padding:14px 10px;text-align:center}
+.stat-n{font-size:20px;font-weight:700;color:var(--teal);line-height:1}
+.stat-l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-top:4px;line-height:1.3}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--card-border);margin:0 18px 26px}
+
+/* ── SECTION ── */
+.section{padding:0 18px 26px}
+.sec-label{font-size:10px;font-weight:600;color:var(--aqua);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px}
+.sec-title{font-size:19px;font-weight:700;letter-spacing:-0.02em;color:var(--white-soft);margin-bottom:16px;line-height:1.2}
+
+/* ── SERVICE CARDS ── */
+.srv-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:15px 14px;display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden}
+.srv-card:active{border-color:var(--card-border2)}
+.srv-card.open{border-color:var(--aqua-border)}
+.srv-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.srv-body{flex:1;min-width:0}
+.srv-name{font-size:14px;font-weight:600;color:var(--teal);margin-bottom:3px}
+.srv-desc{font-size:12px;color:var(--text2);line-height:1.45}
+.srv-arr{color:var(--text3);font-size:17px;flex-shrink:0;align-self:center;transition:transform .2s,color .2s;margin-left:4px}
+.srv-card.open .srv-arr{transform:rotate(90deg);color:var(--aqua)}
+.srv-detail{display:none;border-top:1px solid var(--card-border);margin-top:12px;padding-top:12px}
+.srv-card.open .srv-detail{display:block}
+.srv-features{list-style:none;margin-bottom:12px}
+.srv-features li{font-size:12px;color:var(--text2);line-height:1.5;display:flex;align-items:flex-start;gap:7px;margin-bottom:6px}
+.srv-features li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--aqua);margin-top:5px;flex-shrink:0}
+.srv-price-tag{display:inline-block;background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--gold);margin-bottom:12px}
+
+/* ── ADV GRID ── */
+.adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.adv{background:var(--card-bg);border:1px solid var(--card-border);border-top:2px solid var(--aqua);border-radius:var(--r-sm);padding:14px 12px}
+.adv-ic{font-size:20px;margin-bottom:7px}
+.adv-ttl{font-size:12px;font-weight:600;color:var(--teal);margin-bottom:3px}
+.adv-tx{font-size:11px;color:var(--text2);line-height:1.45}
+
+/* ── CTA BLOCK ── */
+.cta-block{margin:0 18px 26px;background:rgba(0,147,147,0.06);border:1px solid var(--aqua-border);border-radius:var(--r);padding:26px 20px;text-align:center}
+.cta-block h2{font-size:18px;font-weight:700;color:var(--teal);margin-bottom:8px;letter-spacing:-0.02em}
+.cta-block p{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6}
+.cta-block .btn-primary{max-width:260px;margin:0 auto}
+
+/* ── PACKAGES ── */
+.pkg{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:20px 18px;margin-bottom:10px}
+.pkg.featured{border-color:var(--gold-border);background:linear-gradient(135deg,var(--brown-bg) 0%,var(--card-bg) 60%)}
+.pkg-badge{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:3px 9px;border-radius:100px;margin-bottom:10px}
+.b-gold{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border)}
+.b-aqua{background:var(--aqua-bg);color:var(--aqua);border:1px solid var(--aqua-border)}
+.b-gray{background:rgba(131,131,130,0.1);color:var(--gray-mid);border:1px solid rgba(131,131,130,0.2)}
+.pkg-name{font-size:15px;font-weight:700;color:var(--white-soft);margin-bottom:5px}
+.pkg-desc{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5}
+.pkg-price{font-size:24px;font-weight:700;color:var(--teal);margin-bottom:14px}
+.pkg-price span{font-size:13px;color:var(--text2);font-weight:400}
+.pkg-items{list-style:none;margin-bottom:16px}
+.pkg-items li{font-size:12px;color:var(--text2);display:flex;align-items:flex-start;gap:7px;margin-bottom:6px}
+.ck{width:15px;height:15px;border-radius:50%;background:var(--aqua-bg);border:1px solid var(--aqua-border);color:var(--aqua);font-size:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;margin-top:1px}
+
+/* ── PROCESS ── */
+.process{display:flex;flex-direction:column}
+.pstep{display:flex;gap:12px;position:relative}
+.pstep:not(:last-child)::after{content:'';position:absolute;left:14px;top:30px;bottom:-6px;width:1px;background:var(--card-border)}
+.pstep-n{width:30px;height:30px;border-radius:50%;background:var(--aqua-bg);border:1px solid var(--aqua-border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--aqua);flex-shrink:0;position:relative;z-index:1}
+.pstep-c{flex:1;padding:4px 0 20px}
+.pstep-ttl{font-size:13px;font-weight:600;color:var(--white-soft);margin-bottom:2px}
+.pstep-d{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* ── FORM ── */
+.form-wrap{padding:28px 18px 16px}
+.f-label{display:block;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.f-input,.f-textarea{width:100%;background:var(--card-bg);border:1px solid var(--card-border2);border-radius:var(--r-sm);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:14px;transition:border-color .2s}
+.f-input::placeholder,.f-textarea::placeholder{color:var(--text3)}
+.f-input:focus,.f-textarea:focus{border-color:var(--gold-border)}
+.f-textarea{resize:none;min-height:90px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.chip{background:var(--card-bg);border:1px solid var(--card-border2);border-radius:100px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s}
+.chip.on{background:var(--aqua-bg);border-color:var(--aqua-border);color:var(--aqua)}
+.chip:active{transform:scale(.96)}
+.f-note{font-size:10px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.5}
+
+/* ── CONTACT LINKS ── */
+.contact-link{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;text-decoration:none;transition:border-color .15s}
+.contact-link:active{border-color:var(--gold-border)}
+.c-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.c-name{font-size:13px;font-weight:600;color:var(--white)}
+.c-val{font-size:12px;color:var(--text2)}
+.c-arr{color:var(--text3);font-size:16px;margin-left:auto}
+
+/* ── TEAM ── */
+.member{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.m-name{font-size:13px;font-weight:600;color:var(--white-soft);margin-bottom:2px}
+.m-role{font-size:11px;color:var(--text3)}
+
+/* ── PARTNER ── */
+.partner-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r-sm);padding:14px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.p-ic{font-size:22px}
+.p-ttl{font-size:13px;font-weight:600;color:var(--white-soft);margin-bottom:2px}
+.p-sub{font-size:11px;color:var(--text2);line-height:1.4}
+
+/* ── HIGH RISK TAG ── */
+.hrtag{display:inline-flex;align-items:center;gap:5px;background:var(--aqua-bg);border:1px solid var(--aqua-border);border-radius:6px;padding:4px 9px;font-size:11px;font-weight:600;color:var(--aqua);margin-bottom:10px}
+
+/* ── THANK YOU PAGE ── */
+.ty-wrap{padding:48px 24px 32px;text-align:center;min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ty-icon{width:72px;height:72px;border-radius:50%;background:var(--aqua-bg);border:2px solid var(--aqua);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;color:var(--aqua)}
+.ty-title{font-size:22px;font-weight:700;color:var(--white-soft);letter-spacing:-0.02em;margin-bottom:10px}
+.ty-sub{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:32px}
+.ty-next{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:16px;text-align:left;margin-bottom:20px;width:100%}
+.ty-next-title{font-size:12px;font-weight:600;color:var(--aqua);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+.ty-step{font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.ty-step::before{content:'→';color:var(--aqua);flex-shrink:0;font-weight:700}
+.share-btn{background:var(--brown-bg);color:var(--gold-light);border:2px solid var(--gold);border-radius:12px;padding:13px 20px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-bottom:9px;transition:all .15s}
+.share-btn:active{opacity:.85;transform:scale(.98)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:1px solid var(--card-border);display:flex;padding:6px 8px;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:200}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-radius:8px;background:transparent;border:none;font-family:'Inter',sans-serif;cursor:pointer;transition:background .15s}
+.nav-btn.active{background:var(--aqua-bg)}
+.nav-btn:active{background:#111}
+.nav-ic{font-size:16px;line-height:1}
+.nav-lb{font-size:9px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em}
+.nav-btn.active .nav-lb{color:var(--aqua)}
+
+/* ── FOOTER ── */
+.app-footer{border-top:1px solid var(--card-border);padding:20px 18px 16px;text-align:center}
+.footer-logo{font-size:11px;letter-spacing:0.2em;font-weight:700;color:var(--white);margin-bottom:3px}
+.footer-sub{font-size:8px;letter-spacing:0.18em;color:var(--text3);text-transform:uppercase;margin-bottom:16px}
+.footer-bot{display:inline-flex;align-items:center;gap:6px;background:var(--aqua-bg);border:1px solid var(--aqua-border);border-radius:100px;padding:6px 14px;font-size:11px;font-weight:500;color:var(--aqua);text-decoration:none;margin-bottom:14px}
+.footer-links{display:flex;justify-content:center;gap:18px}
+.footer-links a{font-size:10px;color:var(--text3);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="logo">S O Y U Z</div>
+    <span class="logo-sub">Business Consulting Agency</span>
+  </div>
+  <button class="header-cta" onclick="go('contact')">Консультация</button>
+</header>
+
+<!-- ═══ HOME ═══ -->
+<div id="p-home" class="page active">
+  <section class="hero">
+    <div class="hero-tag">Международный консалтинг</div>
+    <h1>Регистрация компаний и <span class="accent">банковские счета</span> за рубежом</h1>
+    <p>Официальный регистратор в Гонконге и представитель банка JDB в Лаосе. Работаем дистанционно.</p>
+    <button class="btn-primary" onclick="go('contact')">Получить консультацию →</button>
+    <button class="btn-secondary" onclick="go('services')">Наши услуги</button>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n">4+</div><div class="stat-l">лет опыта</div></div>
+    <div class="stat"><div class="stat-n">50+</div><div class="stat-l">клиентов</div></div>
+    <div class="stat"><div class="stat-n">2+</div><div class="stat-l">юрисдикции</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <section class="section">
+    <div class="sec-label">Что мы делаем</div>
+    <div class="sec-title">Наши услуги</div>
+
+    <div class="srv-card" onclick="toggleSrv(this)">
+      <div class="srv-icon" style="background:var(--aqua-bg)">🏢</div>
+      <div class="srv-body">
+        <div class="srv-name">Регистрация компаний</div>
+        <div class="srv-desc">Гонконг и Лаос — под ключ</div>
+        <div class="srv-detail">
+          <ul class="srv-features">
+            <li>Официальный агент по регистрации в Гонконге</li>
+            <li>Компания за 3 рабочих дня, документы за 12 часов</li>
+            <li>Корпоративный секретарь + юр. адрес на 1 год</li>
+            <li>Нотариально заверенные документы и печати</li>
+          </ul>
+          <button class="srv-cta" onclick="event.stopPropagation();go('contact')">Оставить заявку →</button>
+        </div>
+      </div>
+      <span class="srv-arr">›</span>
+    </div>
+
+    <div class="srv-card" onclick="toggleSrv(this)">
+      <div class="srv-icon" style="background:var(--aqua-bg)">🏦</div>
+      <div class="srv-body">
+        <div class="srv-name">Банковские счета</div>
+        <div class="srv-desc">Корпоративные счета в JDB Bank, Лаос</div>
+        <div class="srv-detail">
+          <div class="hrtag">✓ Подходит для High Risk бизнеса</div>
+          <ul class="srv-features">
+            <li>Открытие дистанционно, до 5 рабочих дней</li>
+            <li>Валюты: USD, CNY, THB — карты VISA и UnionPay</li>
+            <li>Пополнение через SWIFT и криптовалюту</li>
+            <li>100% возврат при отказе банка после KYB</li>
+            <li>Бесплатный предкомплаенс</li>
+          </ul>
+          <button class="srv-cta" onclick="event.stopPropagation();go('contact')">Оставить заявку →</button>
+        </div>
+      </div>
+      <span class="srv-arr">›</span>
+    </div>
+
+    <div class="srv-card" onclick="toggleSrv(this)">
+      <div class="srv-icon" style="background:var(--aqua-bg)">💳</div>
+      <div class="srv-body">
+        <div class="srv-name">Эквайринг платежей</div>
+        <div class="srv-desc">Онлайн-платежи для e-commerce и SaaS</div>
+        <div class="srv-detail">
+          <ul class="srv-features">
+            <li>Подбор эквайрингового провайдера под бизнес</li>
+            <li>Снижение комиссий и рисков</li>
+            <li>Повышение конверсии на международных рынках</li>
+            <li>Техническая интеграция и поддержка</li>
+          </ul>
+          <button class="srv-cta" onclick="event.stopPropagation();go('contact')">Оставить заявку →</button>
+        </div>
+      </div>
+      <span class="srv-arr">›</span>
+    </div>
+
+    <div class="srv-card" onclick="toggleSrv(this)">
+      <div class="srv-icon" style="background:var(--aqua-bg)">₿</div>
+      <div class="srv-body">
+        <div class="srv-name">Крипто.Про</div>
+        <div class="srv-desc">Легальные крипто-решения для бизнеса</div>
+        <div class="srv-detail">
+          <ul class="srv-features">
+            <li>Проверенные партнёры для покупки и обмена крипты</li>
+            <li>Безопасные транзакции и прозрачные условия</li>
+            <li>Подбор юрисдикции для крипто-операций</li>
+            <li>Минимизация рисков — онбординг и комплаенс</li>
+          </ul>
+          <button class="srv-cta" onclick="event.stopPropagation();go('contact')">Оставить заявку →</button>
+        </div>
+      </div>
+      <span class="srv-arr">›</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section">
+    <div class="sec-label">Почему мы</div>
+    <div class="sec-title">Наши преимущества</div>
+    <div class="adv-grid">
+      <div class="adv"><div class="adv-ic">🌐</div><div class="adv-ttl">Прямые партнёрства</div><div class="adv-tx">Без посредников — напрямую с банками</div></div>
+      <div class="adv"><div class="adv-ic">👤</div><div class="adv-ttl">Персональный менеджер</div><div class="adv-tx">Сопровождение на каждом этапе</div></div>
+      <div class="adv"><div class="adv-ic">⚡</div><div class="adv-ttl">Скорость</div><div class="adv-tx">Чёткие сроки, без задержек</div></div>
+      <div class="adv"><div class="adv-ic">📍</div><div class="adv-ttl">Дистанционно</div><div class="adv-tx">Всё оформляем онлайн</div></div>
+      <div class="adv"><div class="adv-ic">🔒</div><div class="adv-ttl">Конфиденциально</div><div class="adv-tx">Данные клиентов защищены</div></div>
+      <div class="adv"><div class="adv-ic">✅</div><div class="adv-ttl">Легально</div><div class="adv-tx">100% соответствие праву</div></div>
+    </div>
+  </section>
+
+  <div class="cta-block">
+    <h2>Готовы начать?</h2>
+    <p>Расскажите о задаче — ответим в тот же день и предложим решение</p>
+    <button class="btn-primary" onclick="go('contact')">Оставить заявку →</button>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-logo">S O Y U Z</div>
+    <div class="footer-sub">Business Consulting Agency</div>
+    <a href="https://t.me/SoyuzCustDev_bot" class="footer-bot">Уже клиент? → @SoyuzCustDev_bot</a>
+    <div class="footer-links">
+      <a href="https://soyuzconsult.com/privacy_policy_ru">Политика конфиденциальности</a>
+      <a href="mailto:info@soyuzconsult.com">info@soyuzconsult.com</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<div id="p-services" class="page">
+  <div class="form-wrap" style="padding-bottom:0">
+    <div class="sec-label">Пакеты</div>
+    <div class="sec-title" style="margin-bottom:6px">Готовые решения</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6">Комплексные предложения для быстрого старта международного бизнеса</p>
+  </div>
+
+  <div class="section">
+    <div class="pkg featured">
+      <span class="pkg-badge b-gold">🔥 Популярное</span>
+      <div class="pkg-name">Гонконг + Лаос</div>
+      <div class="pkg-desc">Компания в Гонконге + корпоративный счёт в банке JDB под ключ. Полная международная структура.</div>
+      <div class="pkg-price">$5 999 <span>всё включено</span></div>
+      <ul class="pkg-items">
+        <li><span class="ck">✓</span>Регистрация компании в Гонконге (3 дня)</li>
+        <li><span class="ck">✓</span>Открытие счёта JDB Bank, Лаос</li>
+        <li><span class="ck">✓</span>Комплаенс и онбординг</li>
+        <li><span class="ck">✓</span>Корпоративный секретарь на 1 год</li>
+        <li><span class="ck">✓</span>Персональный менеджер</li>
+      </ul>
+      <button class="btn-primary" onclick="go('contact')">Оставить заявку →</button>
+    </div>
+
+    <div class="pkg">
+      <span class="pkg-badge b-gold">Регистрация</span>
+      <div class="pkg-name">Компания в Гонконге</div>
+      <div class="pkg-desc">Полный пакет регистрации. Оптимально для стартапов и развивающихся компаний.</div>
+      <div class="pkg-price">$2 000</div>
+      <ul class="pkg-items">
+        <li><span class="ck">✓</span>Сертификат о регистрации + устав</li>
+        <li><span class="ck">✓</span>Корпоративный секретарь на 1 год</li>
+        <li><span class="ck">✓</span>Юр. адрес в Гонконге на 1 год</li>
+        <li><span class="ck">✓</span>Документы за 12 часов</li>
+      </ul>
+      <button class="btn-secondary" onclick="go('contact')">Узнать подробнее</button>
+    </div>
+
+    <div class="pkg">
+      <span class="pkg-badge b-gold">Банкинг · High Risk</span>
+      <div class="pkg-name">Счёт в JDB Bank, Лаос</div>
+      <div class="pkg-desc">Корпоративный счёт для международных расчётов. Подходит для High Risk компаний. Дистанционно.</div>
+      <div class="pkg-price">от $5 000 <span style="font-size:11px;display:block;margin-top:-2px;color:var(--text3)">депозит + комиссия за открытие</span></div>
+      <ul class="pkg-items">
+        <li><span class="ck">✓</span>Открытие за 5 рабочих дней</li>
+        <li><span class="ck">✓</span>USD, CNY, THB — VISA и UnionPay</li>
+        <li><span class="ck">✓</span>SWIFT + крипта для пополнения</li>
+        <li><span class="ck">✓</span>100% возврат при отказе банка</li>
+      </ul>
+      <button class="btn-secondary" onclick="go('contact')">Узнать подробнее</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <section class="section">
+    <div class="sec-label">Процесс</div>
+    <div class="sec-title">Как мы работаем</div>
+    <div class="process">
+      <div class="pstep"><div class="pstep-n">1</div><div class="pstep-c"><div class="pstep-ttl">Бесплатная консультация</div><div class="pstep-d">Разбираем задачу, подбираем оптимальное решение</div></div></div>
+      <div class="pstep"><div class="pstep-n">2</div><div class="pstep-c"><div class="pstep-ttl">Подготовка документов</div><div class="pstep-d">Нужны только сканы — всё остальное за нами</div></div></div>
+      <div class="pstep"><div class="pstep-n">3</div><div class="pstep-c"><div class="pstep-ttl">Регистрация и онбординг</div><div class="pstep-d">Взаимодействуем с банком и регулятором напрямую</div></div></div>
+      <div class="pstep"><div class="pstep-n">4</div><div class="pstep-c" style="padding-bottom:6px"><div class="pstep-ttl">Готово!</div><div class="pstep-d">Получаете компанию и счёт. Дальнейшее сопровождение по запросу</div></div></div>
+    </div>
+  </section>
+
+  <footer class="app-footer">
+    <div class="footer-logo">S O Y U Z</div>
+    <div class="footer-sub">Business Consulting Agency</div>
+    <a href="https://t.me/SoyuzCustDev_bot" class="footer-bot">Уже клиент? → @SoyuzCustDev_bot</a>
+    <div class="footer-links">
+      <a href="https://soyuzconsult.com/privacy_policy_ru">Политика конфиденциальности</a>
+      <a href="mailto:info@soyuzconsult.com">info@soyuzconsult.com</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══ CONTACT ═══ -->
+<div id="p-contact" class="page">
+  <div class="form-wrap">
+    <div class="sec-label">Заявка</div>
+    <div class="sec-title">Бесплатная консультация</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.65">Ответим в тот же день. Без давления и навязывания услуг.</p>
+
+    <label class="f-label">Имя</label>
+    <input class="f-input" type="text" placeholder="Ваше имя" id="inp-name">
+    <label class="f-label">Telegram / WhatsApp / email</label>
+    <input class="f-input" type="text" placeholder="@username или +7..." id="inp-contact">
+    <label class="f-label" style="margin-bottom:9px">Что интересует?</label>
+    <div class="chips">
+      <span class="chip" onclick="this.classList.toggle('on')">Гонконг + Лаос</span>
+      <span class="chip" onclick="this.classList.toggle('on')">Компания в Гонконге</span>
+      <span class="chip" onclick="this.classList.toggle('on')">Счёт в Лаосе</span>
+      <span class="chip" onclick="this.classList.toggle('on')">Эквайринг</span>
+      <span class="chip" onclick="this.classList.toggle('on')">Крипто.Про</span>
+      <span class="chip" onclick="this.classList.toggle('on')">Другое</span>
+    </div>
+    <label class="f-label">Комментарий</label>
+    <textarea class="f-textarea" id="inp-comment" placeholder="Опишите вашу задачу..."></textarea>
+    <button class="btn-primary" onclick="submitForm()">Отправить заявку →</button>
+    <p class="f-note">Нажимая кнопку, вы соглашаетесь с <a href="https://soyuzconsult.com/privacy_policy_ru" style="color:var(--text3)">политикой конфиденциальности</a></p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" style="padding-top:0">
+    <div class="sec-label">Контакты</div>
+    <div class="sec-title" style="margin-bottom:14px">Написать напрямую</div>
+    <a href="https://t.me/soyuzconsult?utm_source=miniapp&utm_medium=contact&utm_campaign=tg" class="contact-link">
+      <div class="c-icon" style="background:var(--aqua-bg)">✈️</div>
+      <div><div class="c-name">Telegram</div><div class="c-val">@soyuzconsult</div></div>
+      <span class="c-arr">›</span>
+    </a>
+    <a href="mailto:info@soyuzconsult.com" class="contact-link">
+      <div class="c-icon" style="background:var(--brown-bg)">✉️</div>
+      <div><div class="c-name">Email</div><div class="c-val">info@soyuzconsult.com</div></div>
+      <span class="c-arr">›</span>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ THANK YOU ═══ -->
+<div id="p-thankyou" class="page">
+  <div class="ty-wrap">
+    <div class="ty-icon">✓</div>
+    <div class="ty-title">Заявка отправлена!</div>
+    <div class="ty-sub">Мы напишем вам в течение часа.<br>А пока — посмотрите наши пакеты или узнайте о нас подробнее.</div>
+
+    <div class="ty-next">
+      <div class="ty-next-title">Что дальше</div>
+      <div class="ty-step">Менеджер напишет вам в Telegram или на email</div>
+      <div class="ty-step">Проведём бесплатную консультацию — 20–30 минут</div>
+      <div class="ty-step">Предложим оптимальное решение под вашу задачу</div>
+    </div>
+
+    <button class="share-btn" onclick="shareApp()">
+      <span>📤</span> Поделиться с коллегой
+    </button>
+    <button class="btn-secondary" onclick="go('services')">Посмотреть наши пакеты</button>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-logo">S O Y U Z</div>
+    <div class="footer-sub">Business Consulting Agency</div>
+    <a href="https://t.me/SoyuzCustDev_bot" class="footer-bot">Уже клиент? → @SoyuzCustDev_bot</a>
+    <div class="footer-links">
+      <a href="https://soyuzconsult.com/privacy_policy_ru">Политика конфиденциальности</a>
+      <a href="mailto:info@soyuzconsult.com">info@soyuzconsult.com</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<div id="p-about" class="page">
+  <div class="form-wrap" style="padding-bottom:0">
+    <div class="sec-label">Компания</div>
+    <div class="sec-title">Soyuz Consult</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:8px;line-height:1.7">Регистрация компаний за рубежом и открытие банковских счетов.</p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.7">Помогаем разобраться в сложностях международного регулирования, комплаенса, налаживания деловых связей и увеличения продаж.</p>
+  </div>
+
+  <section class="section">
+    <div class="sec-label">Команда</div>
+    <div class="sec-title" style="margin-bottom:14px">Наши специалисты</div>
+    <div class="member">
+      <div class="avatar" style="background:var(--aqua-bg);border:1px solid var(--aqua-border);color:var(--aqua)">ЕП</div>
+      <div><div class="m-name">Елена Пензина</div><div class="m-role">Директор — стратегия и развитие</div></div>
+    </div>
+    <div class="member">
+      <div class="avatar" style="background:var(--aqua-bg);border:1px solid var(--aqua-border);color:var(--aqua)">ДБ</div>
+      <div><div class="m-name">Дарья Большакова</div><div class="m-role">Юрист — правовая поддержка</div></div>
+    </div>
+    <div class="member">
+      <div class="avatar" style="background:rgba(131,131,130,0.1);border:1px solid rgba(131,131,130,0.2);color:var(--gray-mid)">ЕХ</div>
+      <div><div class="m-name">Елена Хамидулина</div><div class="m-role">Международные отношения</div></div>
+    </div>
+    <div class="member">
+      <div class="avatar" style="background:var(--aqua-bg);border:1px solid var(--aqua-border);color:var(--aqua)">РМ</div>
+      <div><div class="m-name">Рано Мусаахунова</div><div class="m-role">Координатор проектов</div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section" style="padding-top:0">
+    <div class="sec-label">Статус</div>
+    <div class="sec-title" style="margin-bottom:14px">Официальные партнёрства</div>
+    <div class="partner-card">
+      <span class="p-ic">🇭🇰</span>
+      <div><div class="p-ttl">Официальный регистратор</div><div class="p-sub">Аккредитованный агент по регистрации компаний в Гонконге</div></div>
+    </div>
+    <div class="partner-card">
+      <span class="p-ic">🇱🇦</span>
+      <div><div class="p-ttl">Представитель JDB Bank</div><div class="p-sub">Официальный прямой представитель банка в Лаосе</div></div>
+    </div>
+  </section>
+
+  <div class="cta-block">
+    <h2>Работаем дистанционно</h2>
+    <p>Не нужно приезжать в офис — всё оформляем онлайн. Документы доставляем удобным способом</p>
+    <button class="btn-primary" onclick="go('contact')">Начать →</button>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-logo">S O Y U Z</div>
+    <div class="footer-sub">Business Consulting Agency</div>
+    <a href="https://t.me/SoyuzCustDev_bot" class="footer-bot">Уже клиент? → @SoyuzCustDev_bot</a>
+    <div class="footer-links">
+      <a href="https://soyuzconsult.com/privacy_policy_ru">Политика конфиденциальности</a>
+      <a href="mailto:info@soyuzconsult.com">info@soyuzconsult.com</a>
+    </div>
+  </footer>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button id="n-home"     class="nav-btn active" onclick="go('home')"><span class="nav-ic">🏠</span><span class="nav-lb">Главная</span></button>
+  <button id="n-services" class="nav-btn"         onclick="go('services')"><span class="nav-ic">⚡</span><span class="nav-lb">Услуги</span></button>
+  <button id="n-contact"  class="nav-btn"         onclick="go('contact')"><span class="nav-ic">📋</span><span class="nav-lb">Заявка</span></button>
+  <button id="n-about"    class="nav-btn"         onclick="go('about')"><span class="nav-ic">👥</span><span class="nav-lb">О нас</span></button>
+</nav>
+
+<script>
+// ── Telegram init ──
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#000000'); tg.setBackgroundColor('#000000'); }
+
+// ── UTM source из Telegram ──
+function getUTM() {
+  const src = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param ? tg.initDataUnsafe.start_param : 'direct';
+  return src;
+}
+
+// ── Навигация ──
+function go(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('p-' + name).classList.add('active');
+  const nb = document.getElementById('n-' + name);
+  if (nb) nb.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Аккордеон услуг ──
+function toggleSrv(card) {
+  const was = card.classList.contains('open');
+  document.querySelectorAll('.srv-card.open').forEach(c => c.classList.remove('open'));
+  if (!was) card.classList.add('open');
+}
+
+// ── Отправка заявки ──
+async function submitForm() {
+  const name    = document.getElementById('inp-name').value.trim();
+  const contact = document.getElementById('inp-contact').value.trim();
+  if (!name || !contact) { alert('Укажите имя и контакт'); return; }
+
+  const services = [...document.querySelectorAll('.chip.on')].map(c => c.textContent);
+  const comment  = document.getElementById('inp-comment').value.trim();
+  const utm      = getUTM();
+
+  // Текст для группы
+  const msgText =
+    '🔔 *Новая заявка с Mini App*\n\n' +
+    '👤 *Имя:* ' + name + '\n' +
+    '📱 *Контакт:* ' + contact + '\n' +
+    (services.length ? '📋 *Интерес:* ' + services.join(', ') + '\n' : '') +
+    (comment ? '💬 *Комментарий:* ' + comment + '\n' : '') +
+    '🔗 *Источник:* ' + utm;
+
+  // Отправка в группу через бота
+  // ЗАМЕНИТЕ BOT_TOKEN на токен вашего бота, CHAT_ID на -1001234567890 (id группы)
+  try {
+    await fetch('http://192.248.179.239:3000/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, contact, services, comment, utm })
+    });
+  } catch(e) { console.log('Send error', e); }
+
+  // Данные в WebApp (для бота мини-аппа)
+  if (tg) {
+    try { tg.sendData(JSON.stringify({ name, contact, services, comment, utm })); } catch(e) {}
+  }
+
+  // Показать страницу «Спасибо»
+  go('thankyou');
+}
+
+// ── Кнопка «Поделиться» ──
+function shareApp() {
+  const appUrl = 'https://t.me/soyuzconsultbot/app?utm_source=share&utm_medium=referral';
+  const text   = 'Soyuz Consult — регистрация компаний и банковские счета за рубежом. Гонконг и Лаос.';
+  if (tg && tg.openTelegramLink) {
+    tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(appUrl) + '&text=' + encodeURIComponent(text));
+  } else {
+    window.open('https://t.me/share/url?url=' + encodeURIComponent(appUrl) + '&text=' + encodeURIComponent(text), '_blank');
+  }
+}
+</script>
+</body>
+</html>
