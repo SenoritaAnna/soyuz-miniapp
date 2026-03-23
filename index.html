@@ -447,11 +447,18 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--text);mi
     <label class="f-label">Имя</label>
     <input class="f-input" type="text" placeholder="Ваше имя" id="inp-name">
 
-    <label class="f-label">Telegram / WhatsApp</label>
-    <input class="f-input" type="text" placeholder="@username или +7..." id="inp-contact">
-
-    <label class="f-label">Email</label>
-    <input class="f-input" type="email" placeholder="your@email.com" id="inp-email">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div>
+        <label class="f-label">Telegram <span style="color:var(--aqua)">*</span></label>
+        <input class="f-input" type="text" placeholder="@username" id="inp-contact" style="margin-bottom:0" oninput="validateTg(this)">
+        <span id="err-tg" style="font-size:10px;color:#E24B4A;display:none;margin-top:3px;display:block;min-height:14px"></span>
+      </div>
+      <div>
+        <label class="f-label">Email <span style="color:var(--aqua)">*</span></label>
+        <input class="f-input" type="email" placeholder="your@email.com" id="inp-email" style="margin-bottom:0" oninput="validateEmail(this)">
+        <span id="err-email" style="font-size:10px;color:#E24B4A;display:none;margin-top:3px;display:block;min-height:14px"></span>
+      </div>
+    </div>
 
     <label class="f-label">Название компании (если есть)</label>
     <input class="f-input" type="text" placeholder="Например: Acme Ltd" id="inp-company">
@@ -633,10 +640,36 @@ function toggleSrv(card) {
 }
 
 // ── Отправка заявки ──
-async function submitForm() {
+async function validateTg(el) {
+  const err = document.getElementById('err-tg');
+  if (!el.value.startsWith('@') && el.value.length > 0) {
+    err.textContent = 'Должно начинаться с @';
+    err.style.display = 'block';
+  } else { err.style.display = 'none'; }
+}
+function validateEmail(el) {
+  const err = document.getElementById('err-email');
+  if (el.value && !/^[^@]+@[^@]+\.[^@]+$/.test(el.value)) {
+    err.textContent = 'Некорректный формат';
+    err.style.display = 'block';
+  } else { err.style.display = 'none'; }
+}
+function submitForm() {
   const name    = document.getElementById('inp-name').value.trim();
   const contact = document.getElementById('inp-contact').value.trim();
-  if (!name || !contact) { alert('Укажите имя и контакт'); return; }
+  const tgVal = document.getElementById('inp-contact').value.trim();
+  const emailVal = document.getElementById('inp-email').value.trim();
+  if (!name) { alert('Укажите имя'); return; }
+  if (!tgVal || !tgVal.startsWith('@')) { 
+    document.getElementById('err-tg').textContent = 'Введите @username';
+    document.getElementById('err-tg').style.display = 'block';
+    document.getElementById('inp-contact').focus(); return; 
+  }
+  if (!emailVal || !/^[^@]+@[^@]+\.[^@]+$/.test(emailVal)) { 
+    document.getElementById('err-email').textContent = 'Введите корректный email';
+    document.getElementById('err-email').style.display = 'block';
+    document.getElementById('inp-email').focus(); return; 
+  }
 
   const email   = document.getElementById('inp-email').value.trim();
   const company = document.getElementById('inp-company').value.trim();
