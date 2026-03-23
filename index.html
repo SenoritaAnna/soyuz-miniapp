@@ -632,7 +632,7 @@ async function submitForm() {
   // Отправка в группу через бота
   // ЗАМЕНИТЕ BOT_TOKEN на токен вашего бота, CHAT_ID на -1001234567890 (id группы)
   try {
-    await fetch('http://192.248.179.239:3000/send', {
+    await fetch('https://api.soyuzconsult.com/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, contact, services, comment, utm })
