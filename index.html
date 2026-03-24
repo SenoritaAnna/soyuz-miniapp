@@ -640,7 +640,7 @@ function toggleSrv(card) {
 }
 
 // ── Отправка заявки ──
-async function validateTg(el) {
+function validateTg(el) {
   const err = document.getElementById('err-tg');
   if (!el.value.startsWith('@') && el.value.length > 0) {
     err.textContent = 'Должно начинаться с @';
