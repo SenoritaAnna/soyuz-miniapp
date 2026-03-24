@@ -654,7 +654,7 @@ function validateEmail(el) {
     err.style.display = 'block';
   } else { err.style.display = 'none'; }
 }
-function submitForm() {
+async function submitForm() {
   const name    = document.getElementById('inp-name').value.trim();
   const contact = document.getElementById('inp-contact').value.trim();
   const tgVal = document.getElementById('inp-contact').value.trim();
@@ -696,7 +696,7 @@ function submitForm() {
     await fetch('https://api.soyuzconsult.com/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, contact, services, comment, utm })
+      body: JSON.stringify({ name, contact, email, company, services, geo, comment, utm })
     });
   } catch(e) { console.log('Send error', e); }
 
