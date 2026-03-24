@@ -649,7 +649,7 @@ function validateTg(el) {
 }
 function validateEmail(el) {
   const err = document.getElementById('err-email');
-  if (el.value && !/^[^@]+@[^@]+\.[^@]+$/.test(el.value)) {
+  if (el.value && !/^[^@]+@[^@]+[.][^@]+$/.test(el.value)) {
     err.textContent = 'Некорректный формат';
     err.style.display = 'block';
   } else { err.style.display = 'none'; }
@@ -665,7 +665,7 @@ async function submitForm() {
     document.getElementById('err-tg').style.display = 'block';
     document.getElementById('inp-contact').focus(); return; 
   }
-  if (!emailVal || !/^[^@]+@[^@]+\.[^@]+$/.test(emailVal)) { 
+  if (!emailVal || !/^[^@]+@[^@]+[.][^@]+$/.test(emailVal)) { 
     document.getElementById('err-email').textContent = 'Введите корректный email';
     document.getElementById('err-email').style.display = 'block';
     document.getElementById('inp-email').focus(); return; 
